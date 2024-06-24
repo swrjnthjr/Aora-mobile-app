@@ -25,7 +25,7 @@ const SignUp = () => {
       //todo set to global state
       router.replace("/home");
     } catch (error) {
-      console.log("error", error);
+      console.log("sign-up error", error);
       Alert.alert("Error", error.message);
     } finally {
       setIsSubmitting(false);

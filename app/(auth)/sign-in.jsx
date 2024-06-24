@@ -1,10 +1,11 @@
+import { Link, router } from "expo-router";
 import React, { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButtons from "../../components/CustomButtons";
 import FormField from "../../components/FormField";
 import { images } from "../../constants";
-import { Link } from "expo-router";
+import { signIn } from "../../lib/appwirite";
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -12,9 +13,24 @@ const SignIn = () => {
     password: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const submit = () => {
-    console.log(form);
+
+  const submit = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert("Error", "Please fill in all the fields");
+    }
+    setIsSubmitting(true);
+    try {
+      const result = await signIn(form.email, form.password);
+      //todo set to global state
+      router.replace("/home");
+    } catch (error) {
+      console.log("sign-up error", error);
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
@@ -54,7 +70,12 @@ const SignIn = () => {
             <Text className="text-lg text-gray-100 font-pregular">
               Don't have an account?
             </Text>
-            <Link href={"/sign-up"} className="text-lg text-secondary font-psemibold">Sign Up</Link>
+            <Link
+              href={"/sign-up"}
+              className="text-lg text-secondary font-psemibold"
+            >
+              Sign Up
+            </Link>
           </View>
         </View>
       </ScrollView>
